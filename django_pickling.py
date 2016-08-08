@@ -9,6 +9,13 @@ except ImportError:
     izip = zip
 
 
+def model_is_deferred(model):
+    try:
+        return bool(model.get_deferred_fields())
+    except AttributeError:
+        return model._deferred
+
+
 def attnames(cls, _cache={}):
     try:
         return _cache[cls]
@@ -23,7 +30,7 @@ def model_unpickle(cls, data):
 model_unpickle.__safe_for_unpickle__ = True
 
 def Model__reduce__(self):
-    if self._deferred:
+    if model_is_deferred(self):
         return original_Model__reduce__(self)
     else:
         cls = self.__class__
