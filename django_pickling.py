@@ -1,4 +1,6 @@
+from django.db import DJANGO_VERSION_PICKLE_KEY
 from django.db.models import Model
+from django.utils.version import get_version
 try:
     from itertools import izip
 except ImportError:
@@ -38,6 +40,7 @@ def model__reduce__(self):
     else:
         cls = self.__class__
         data = self.__dict__.copy()
+        data[DJANGO_VERSION_PICKLE_KEY] = get_version()
 
         vector = map(data.pop, attnames(cls))
         return model_unpickle, (cls, vector), data
